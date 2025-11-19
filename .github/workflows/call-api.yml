@@ -1,1 +1,46 @@
 
+name: Call API and update README
+
+on:
+  workflow_dispatch:
+
+
+permissions:
+  contents: write
+
+jobs:
+  call-api:
+    runs-on: ubuntu-latest
+    steps:  
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start API
+        run: npm start &
+
+
+      - name: Call custom action
+        uses: ./.github/actions/call-node-api
+        with:
+          api_url: http://localhost:3000/status
+
+
+      - name: Commit README update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Update README with API status" || echo "No changes to commit"
+          git push
+
+
+
