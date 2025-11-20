@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const http = require('http');
-const { timeStamp } = require('console');
+const axios = require('axios');
 
 const apiUrl = process.env['INPUT_API_URL'];
 
@@ -12,39 +11,27 @@ if (!apiUrl){
     process.exit(1);
 }
 
-http.get(apiUrl, (res) => {
-    let data = '';
 
-    res.on('data', (chunk) => {
-        data += chunk;
-    });
+axios.get(apiUrl)
+  .then((response) => {
+    const json = response.data;
 
-    res.on('end', () => {
-        try{
-            const json = JSON.parse(data);
+    const markdown = `
+    - Status: ${json.status}
+    - Service: ${json.service}
+    - Timestamp: ${json.timestamp}
+    `;
 
-            const markdown = `## API Status
-            
-            - Status: ${json.status}
-            - Service: ${json.service}
-            - Timestamp: ${json.timestamp}
-            `;
+    console.log('Generated Markdown:');
+    console.log(markdown);
 
-            console.log('Generated Markdown:');
-            console.log(markdown);
-
-            
-            updateReadme(markdown);
-            
-        } catch (err){
-            console.error('Failed to parse API response as JSON:', err.message);
-            process.exit(1);
-        }
-    });
-}).on('error', (err) => {
+    updateReadme(markdown);
+  })
+  .catch((err) => {
     console.error('Error calling API:', err.message);
     process.exit(1);
-});
+  });
+
 
 
 
