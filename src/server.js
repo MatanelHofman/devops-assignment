@@ -5,7 +5,7 @@ const app = express();
 app.get('/status', (req, res) => {
     res.json({
         status: "ok",
-        service: "devops-assigngment",
+        service: "devops-assignment",
         timestamp: new Date().toISOString()
     });
 });
