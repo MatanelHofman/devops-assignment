@@ -5,6 +5,6 @@ inputs:
     description: "The URL of the API"
     required: true
 runs:
-  using: "node18"
+  using: "node20"
   main: "index.js"
 
